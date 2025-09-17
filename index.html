@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>INE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        :root {
+            --card-w: 520px;
+            --card-h: 340px;
+            --bg: #eaeaea;
+            --frame: #fff;
+            --border: #999999d7;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            background: var(--bg);
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 30px;
+        }
+        
+        button {
+            padding: 8px 12px;
+            border: 1px solid #888;
+            background: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        /* FLIP CARD */
+        .flip-wrap {
+            width: var(--card-w);
+            perspective: 1200px;
+        }
+        
+        .flip-card {
+            width: 100%;
+            height: var(--card-h);
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 600ms cubic-bezier(.2,.9,.3,1);
+        }
+        
+        .flip-card.is-flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .side {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0,0,0,0.18);
+            border: 2px solid var(--border);
+            background: var(--frame);
+        }
+        
+        .side.back {
+            transform: rotateY(180deg);
+        }
+        
+        /* Encabezado frontal */
+        .header {
+            background: linear-gradient(90deg,#f3f3f3,#eaeaea);
+            padding: 6px 10px;
+            font-size: 13px;
+            font-weight: 700;
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .logo-mexico {
+            width: 45px;
+            height: 45px;
+            border: 1px solid #777;
+            background: #f9f9f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .logo-mexico img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .header-left span {
+            font-size: 16px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        
+        .header-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+        }
+        
+        .header-center div:first-child {
+            font-size: 14px;
+        }
+        
+        .header-center div:last-child {
+            font-size: 13px;
+        }
+        
+        /* --- FRONT BODY --- */
+        .front .front-body {
+            display: flex;
+            gap: 18px;
+            padding: 12px;
+            height: calc(100% - 50px);
+        }
+        
+        .left-col {
+            width: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .foto {
+            width: 120px;
+            height: 140px;
+            border: 1px solid #666;
+            overflow: hidden;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .foto img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .firma {
+            width: 120px;
+            margin-top: 34px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 4px;
+        }
+        
+        .firma-img {
+            width: 120px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .firma-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+        
+        .firma .txt {
+            font-size: 11px;
+            font-style: italic;
+            color: #222;
+        }
+        
+        .right-col {
+            flex: 1;
+            font-size: 13px;
+            line-height: 1.45;
+            padding-top: 6px;
+            position: relative;
+        }
+        
+        .mini-photo {
+            position: absolute;
+            right: 8px;
+            top: 26px;
+            width: 80px;
+            height: 100px;
+            opacity: 0.5;
+            border: 1px solid #999;
+            overflow: hidden;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .mini-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .sexo-label {
+            position: absolute;
+            right: 8px;
+            top: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        
+        .datos {
+            padding-right: 95px;
+        }
+        
+        .datos strong {
+            font-weight: 700;
+        }
+        
+        .datos div {
+            margin-bottom: 6px;
+        }
+        
+        .folio {
+            position: absolute;
+            right: 12px;
+            bottom: 12px;
+            font-size: 11px;
+            color: #333;
+            text-align: right;
+        }
+        
+        /* --- BACK --- */
+        .back {
+            background: repeating-linear-gradient(
+                45deg,
+                #fafafa,
+                #fafafa 6px,
+                #f3f3f3 6px,
+                #f3f3f3 12px
+            );
+        }
+        
+        .back .back-body {
+            padding: 12px;
+            height: calc(100% - 40px);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .franja {
+            height: 40px;
+            background: linear-gradient(90deg,#cfcfcf, #efefef, #cfcfcf);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: #222;
+            border-bottom: 1px solid #bbb;
+        }
+        
+        .top-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        
+        .codigo-barras {
+            width: 120px;
+            height: 34px;
+            background: repeating-linear-gradient(90deg,#000,#000 1px,#fff 1px,#fff 2px);
+            border: 1px solid #bbb;
+        }
+        
+        .qrs {
+            display: flex;
+            gap: 10px;
+            flex: 1;
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+        
+        .qr-large {
+            width: 170px;
+            height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .qr-large img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .qr-col-right {
+            width: 150px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .small-qr {
+            width: 90px;
+            height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .small-qr img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .firma-func {
+            text-align: center;
+            font-size: 11px;
+        }
+        
+        .firma-func .firma-img {
+            width: 120px;
+            height: 40px;
+            margin: 4px 0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .firma-func .firma-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .firma-func div {
+            line-height: 1.3;
+        }
+        
+        .firma-func div:nth-child(2) {
+            font-size: 10px;
+            font-weight: bold;
+            margin: 4px 0;
+        }
+        
+        .firma-func div:nth-child(3) {
+            font-size: 8px;
+            line-height: 1.2;
+        }
+        
+        .ocr {
+            margin-top: auto;
+            font-family: "Courier New", monospace;
+            font-size: 14px;
+            line-height: 1.4;
+            letter-spacing: 2px;
+            text-align: center;
+            padding: 6px 10px;
+            border-top: 1px solid #e6e6e6;
+            background: linear-gradient(180deg, rgba(0,0,0,0.02), transparent);
+        }
+        
+        @media (max-width:520px) {
+            :root {
+                --card-w: 360px;
+                --card-h: 240px;
+            }
+            
+            .foto {
+                width: 90px;
+                height: 110px;
+            }
+            
+            .firma {
+                width: 90px;
+            }
+            
+            .firma-img {
+                width: 90px;
+                height: 36px;
+            }
+            
+            .mini-photo {
+                right: 6px;
+                top: 22px;
+                width: 60px;
+                height: 80px;
+            }
+            
+            .qr-large {
+                width: 120px;
+                height: 100px;
+            }
+            
+            .datos {
+                padding-right: 70px;
+                font-size: 11px;
+            }
+            
+            .sexo-label {
+                font-size: 10px;
+            }
+            
+            .firma-func .firma-img {
+                width: 100px;
+                height: 35px;
+            }
+            
+            .small-qr {
+                width: 70px;
+                height: 70px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>INE</h1>
+    
+    <div class="flip-wrap">
+        <div id="card" class="flip-card">
+            <!-- FRENTE -->
+            <div class="side front">
+                <div class="header">
+                    <div class="header-left">
+                        <div class="logo-mexico">
+                            <img src="logo.jpg" alt="INE">
+                        </div>
+                        <span>MÉXICO</span>
+                    </div>
+                    <div class="header-center">
+                        <div>INSTITUTO NACIONAL ELECTORAL</div>
+                        <div>CREDENCIAL PARA VOTAR</div>
+                    </div>
+                </div>
+                <div class="front-body">
+                    <div class="left-col">
+                        <div class="foto">
+                            <img src="zuri.jpg" alt="Foto Zuri">
+                        </div>
+                        <div class="firma">
+                            <div class="firma-img">
+                                <img src="firmazuri.jpg" alt="Firma del elector">
+                            </div>
+                            <div class="txt"></div>
+                        </div>
+                    </div>
+                    <div class="right-col">
+                        <div class="sexo-label">SEXO: M</div>
+                        <div class="mini-photo">
+                            <img src="zuri.jpg" alt="Mini foto">
+                        </div>
+                        <div class="datos">
+                            <div><strong>NOMBRE:</strong><br>MONROY CRUZ ZURI SADAY</div>
+                            <div><strong>DOMICILIO:</strong><br>CDA LA QUEBRADA S/N<br>LOC MANTO DEL RÍO, C.P. 50494<br>ATLACOMULCO, MEX.</div>
+                            <div><strong>CLAVE DE ELECTOR:</strong> MNCRZR05081615M000</div>
+                            <div><strong>CURP:</strong> MOCZ50816MCMNRR7A</div>
+                            <div><strong>FECHA DE NACIMIENTO:</strong> 16/08/2005</div>
+                            <div><strong>SECCIÓN:</strong> 0432</div>
+                            <div><strong>AÑO DE REGISTRO:</strong> 2023</div>
+                        </div>
+                        <div class="folio"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- REVERSO -->
+            <div class="side back">
+                <div class="header"></div>
+                <div class="back-body">
+                    <div class="franja">
+                        ELECCIONES FEDERALES · LOCALES Y EXTRAORDINARIAS
+                    </div>
+                    <div class="top-row">
+                        <div class="codigo-barras"></div>
+                        <div class="qrs">
+                            <div class="qr-large">
+                                <img src="qr2.jpg" alt="QR Code 1">
+                            </div>
+                            <div class="qr-large">
+                                <img src="qr2.jpg" alt="QR Code 2">
+                            </div>
+                            <div class="qr-col-right">
+                                <div class="small-qr">
+                                    <img src="qr2.jpg" alt="QR Code 3">
+                                </div>
+                                <div class="firma-func">
+                                    <div class="firma-img">
+                                        <img src="firmasecretaria.jpg" alt="Firma funcionaria">
+                                    </div>
+                                    <div>MARIA ELENA CORNEJO ESPARZA</div>
+                                    <div>ENCARGADA DEL DESPACHO<br>SECRETARÍA EJECUTIVA INE</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ocr">
+                        IDMEX2573711442&lt;&lt;0432136687161<br>
+                        0508160M3312315MEX00&lt;&lt;285766<br>
+                        MONROY&lt;&lt;CRUZ&lt;&lt;ZURI&lt;&lt;SADAY&lt;&lt;
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <button id="flipBtn">Voltear / Ver reverso</button>
+    
+    <script>
+        const card = document.getElementById('card');
+        const flipBtn = document.getElementById('flipBtn');
+        
+        flipBtn.addEventListener('click', () => {
+            card.classList.toggle('is-flipped');
+        });
+    </script>
+</body>
+</html>
